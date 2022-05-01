@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "tableBar": "../../../template/tableBar/tableBar",
+    "showDetails": "../../../template/showDetails/showDetails"
+  }
+}

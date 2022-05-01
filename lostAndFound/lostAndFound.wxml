@@ -1,0 +1,118 @@
+<tableBar tableBarHeight="{{tableBarH}}" tableBarBgc="#4666c5" tableBarFontColor="#fff" icon_left1="icon-cpzuojiantou" content_center="失物招领" tapIcon_left1="navigateBackToLastpage" tapIcon_left2="navigateBackToLastpage"></tableBar>
+
+<view class="container" style="margin-top:calc({{tableBarH+45}}px + 3vw);">
+  <!-- 搜索框 -->
+  <view class="searchBox">
+    <view class="searchBar CSline" bindtap="searchLost">
+      <view class="iconfont icon-cpResearch"></view>
+      <view class="showList" bindtap="showChooseList">
+        <view class="showListLeftBox">
+          <view class="showListLeft" wx:for="{{chooseListData}}" wx:key="index" wx:if="{{item.state}}">{{item.name}}
+          </view>
+          <view class="showListLeft" wx:if="{{otherTips.length!=0}}">{{otherTips}}</view>
+        </view>
+      </view>
+    </view>
+    <label>
+      <view class="customerIcon CSline iconfont icon-cptyping"></view>
+      <button open-type="contact" hidden></button>
+    </label>
+  </view>
+
+  <!-- 展示列表 -->
+  <view class="showChooseList {{showChooseList?'':'hideChooseList'}}">
+    <view class="chooseItem" style="padding-top: 6vw;">
+      <view class="orgLevelTitle">物品类别</view>
+      <view class="orgLevelitem {{item.state?'orgLevelitemChoosed':''}}" wx:for="{{chooseListData}}" wx:key="index" id="{{index}}" data-idx="0" bindtap="changeCooseItem">{{item.name}}</view>
+    </view>
+    <view class="chooseItem" style="padding-top: 3vw;display: flex;flex-direction: row;width: calc(84vw - 6vw);">
+      <view class="orgLevelTitle">其他条件</view>
+      <input bindinput="addOtherTips" placeholder="请输入筛选条件，并用分号隔开" />
+    </view>
+    <view class="chooseItem" style="padding-top: 4.5vw;width: calc(84vw - 6vw);">
+      <view class="searchInfo iconfont icon-cpResearch" bindtap="searchWithArgs"> 开始查询</view>
+    </view>
+  </view>
+
+
+  <!-- 推荐框 -->
+  <view class="recommendBox">
+    <view class="recommendIndex">
+      <view class="bottomLineBox CSline" data-id="0" bindtap="recommendChange" style="color: {{whichRecommend==0?'#4666c5':''}};">物找主</view>
+      <view class="bottomLineBox CSline" data-id="1" bindtap="recommendChange" style="color: {{whichRecommend==1?'#4666c5':''}};">主找物</view>
+    </view>
+    <view class="recommendLine">
+      <view class="lineItem" style="left: {{whichRecommend==0?'23.5vw':'70.5vw'}};width: 24vw;">
+      </view>
+    </view>
+  </view>
+
+
+  <view class="contentBox" style="height: calc(100vh - 25vw - {{tableBarH+47}}px);">
+    <!-- 列表内容（物找主）-->
+    <scroll-view class="ccBox {{whichRecommend==0?'swiperBoxAdd':'swiperBox'}}" style="transform: {{whichRecommend==0?'translateX(0)':'translateX(-100%)'}};" refresher-enabled bindrefresherrefresh="refreshList" refresher-triggered="{{refreshListControler}}" bindscrolltolower="lowerRefresh" scroll-y scroll-with-animation scroll-top="{{backToTop}}" lower-threshold="20">
+
+      <view class="contentItem" wx:for="{{foundList}}" wx:key="index" id="{{index}}" bindtap="articleDetail">
+        <view class="mainInfoBox" style="margin-right: 3vw;">
+          <view class="mainTitle">{{item.findInfo.chooseResult.itemTypeShow}} - {{item.findInfo.itemName}}</view>
+          <view class="subTitle">{{item.findInfo.chooseResult.placeTypeShow}} - {{item.findInfo.placeDetail}}</view>
+          <view class="tagBox">
+            <view class="tagItem">
+              <text style="min-width: fit-content;">{{item.findPeople.XY}}</text>
+              <text decode="true" style="min-width: fit-content;color: #4666c5;">&nbsp;{{collegeData[item.findPeople.XY]?collegeData[item.findPeople.XY]:'n'}}次&nbsp;</text>
+              <text>拾金不昧行为</text>
+            </view>
+          </view>
+          <view class="hotInfo" style="margin-top: 1vw;">
+            <view class="star iconfont icon-upstagefill">{{item.state==100?item.findPeople.XM:'匿名User'}}</view>
+            <view class="timeInfo">{{item.creatTime}}</view>
+          </view>
+        </view>
+        <view class="imageBox">
+          <image wx:if="{{item.findInfo.picList.length!=0}}" style="max-height: 30vw;max-width: 30vw;border-radius: 4px;" src="{{item.findInfo.picList[0]}}"></image>
+          <view wx:if="{{item.findInfo.picList.length==0}}" class="noImage">{{tools.cut(item.findInfo.itemName,0,4)}}</view>
+        </view>
+      </view>
+
+    </scroll-view>
+
+    <!-- 列表内容（主找物） -->
+    <scroll-view class="ccBox {{whichRecommend==1?'swiperBoxAdd':'swiperBox'}}" style="transform: {{whichRecommend==1?'translateX(0)':'translateX(100%)'}};" refresher-enabled bindrefresherrefresh="refreshList" refresher-triggered="{{refreshListControler}}" bindscrolltolower="lowerRefresh" scroll-y scroll-with-animation scroll-top="{{backToTop}}" lower-threshold="20">
+
+      <view>
+        <view class="contentItem" wx:for="{{lostList}}" wx:key="index" id="{{index}}" bindtap="articleDetail">
+          <view class="mainInfoBox" style="margin-right: 2vw;">
+            <view class="mainTitle">{{item.findInfo.chooseResult.itemTypeShow}} - {{item.findInfo.itemName}}</view>
+            <view class="subTitle">{{item.findInfo.chooseResult.placeTypeShow}} - {{item.findInfo.placeDetail}}</view>
+            <view class="tagBox">
+            </view>
+            <view class="stuInfo" style="margin-top: 1vw;">
+              <view class="tagItem">
+                <text style="min-width: fit-content;">学生发布</text>
+              </view>
+              <view class="star iconfont icon-upstagefill" style="margin-left: 3vw;">{{item.state==800?item.findPeople.XM:'匿名User'}}</view>
+            </view>
+            <view class="timeInfo">{{item.creatTime}}</view>
+          </view>
+          <view class="imageBox">
+            <image wx:if="{{item.findInfo.picList.length!=0}}" style="max-height: 30vw;max-width: 30vw;border-radius: 4px;" src="{{item.findInfo.picList[0]}}"></image>
+            <view wx:if="{{item.findInfo.picList.length==0}}" class="noImage">{{tools.cut(item.findInfo.itemName,0,4)}}</view>
+          </view>
+        </view>
+      </view>
+
+    </scroll-view>
+  </view>
+</view>
+
+
+<!-- 操作区域 -->
+<view class="userDisplay iconfont icon-cpPlus" bindtap="addNewLost"></view>
+
+<showDetails readOnly_showDetails="{{readOnly_}}" readOnly_title="{{readOnly_dataTitle}}" readOnly_haveNext="{{readOnly_roomInfo=='noNext'?false:true}}" readOnly_nextIcon="icon-cpLayer" readOnly_nextContent="{{readOnly_roomInfo}}" readOnly_contentGrop="{{readOnly_dataShow}}" bind:pageDesignFun1Must="readOnly_rightBS"></showDetails>
+
+<view class="readOnly_containerS" wx:if="{{showChooseList}}" bindtap="searchLost"></view>
+
+
+<!-- 引入wxs脚本 -->
+<wxs src="../../../utils/cutBox/scoreCut.wxs" module="tools" />

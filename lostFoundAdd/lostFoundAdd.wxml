@@ -1,0 +1,116 @@
+<tableBar tableBarHeight="{{tableBarH}}" tableBarBgc="#4666c5" tableBarFontColor="#fff" icon_left1="icon-cpzuojiantou" content_center="失物招领登记" tapIcon_left1="navigateBackToLastpage" tapIcon_left2="navigateBackToLastpage"></tableBar>
+
+<view class="container" style="margin-top:calc({{tableBarH+45}}px)">
+  <view class="loadBox" style="width: {{loadWidth}}vw;"></view>
+  <view class="container1">
+    <!-- 内容编辑区域 -->
+    <view>
+      <view class="showBox CSline" bindtap="changeLFType">
+        <view>{{addType==100?'【物找主】拾取物品登记':'【主找物】物品丢失登记'}}</view>
+        <view class="iconfont icon-cpa-downchevron"></view>
+      </view>
+      <view class="fixBox">
+        <!-- 表单填写 -->
+        <view class="classInfo">
+
+          <view class="weekBox blackLine">
+            <view class="weekName">物品类别</view>
+            <picker mode="selector" range="{{chooseRangeList.itemType}}" bindchange="columnPickerChange" class="pickerClass" data-selectid="itemType">
+              <view class="pickItem">{{chooseResult.itemType}}</view>
+            </picker>
+          </view>
+
+          <view class="CIitem {{tryToCheck&&inputContent.itemName.state!=1?'redLine':'blackLine'}}">
+            <view class="CIIname">物品名称</view>
+            <input id="itemName" bindinput="inputChange" />
+          </view>
+
+          <view class="articleBox blackLine">
+            <view class="articleTitle">
+              {{showTipsName.itemType[chooseResult.itemType].inputTitle}}
+            </view>
+            <view class="articleContent">
+              <textarea class="textareaStyle {{tryToCheck&&inputContent.itemTips.state!=1?'textAlart':'textNomal'}}" maxlength="-1" bindinput="inputChange" id="itemTips" placeholder="{{showTipsName.itemType[chooseResult.itemType].inputTips}}">
+          </textarea>
+            </view>
+          </view>
+
+          <view class="weekBox blackLine">
+            <view class="weekName">{{addType==100?'拾取场景':'丢失场景'}}</view>
+            <picker mode="selector" range="{{chooseRangeList.placeType}}" bindchange="columnPickerChange" class="pickerClass" data-selectid="placeType">
+              <view class="pickItem">{{chooseResult.placeType}}</view>
+            </picker>
+          </view>
+
+          <view class="articleBox blackLine">
+            <view class="articleTitle">
+              {{addType==100?showTipsName.placeType[chooseResult.placeType].inputTitle:'丢失地点'}}
+            </view>
+            <view class="articleContent">
+              <textarea class="textareaStyle {{tryToCheck&&inputContent.placeDetail.state!=1?'textAlart':'textNomal'}}" maxlength="-1" bindinput="inputChange" id="placeDetail" placeholder="{{addType==100?showTipsName.placeType[chooseResult.placeType].inputTips:'请详细描述丢失的地点或路线，用分号隔开。'}}">
+          </textarea>
+            </view>
+          </view>
+
+          <view class="weekBox blackLine">
+            <view class="weekName">处理方法</view>
+            <picker wx:if="{{addType==100}}" mode="selector" range="{{chooseRangeList.layType}}" bindchange="columnPickerChange" class="pickerClass" data-selectid="layType">
+              <view class="pickItem">{{chooseResult.layType}}</view>
+            </picker>
+            <view class="pickerClass" wx:if="{{addType!=100}}">自身保管，联系取回【默认】</view>
+          </view>
+
+          <view class="articleBox">
+            <view class="articleTitle">
+              {{addType==100?showTipsName.layType[chooseResult.layType].inputTitle:'联系方式'}}
+            </view>
+            <view class="articleContent">
+              <textarea class="textareaStyle {{tryToCheck&&inputContent.layPlace.state!=1?'textAlart':'textNomal'}}" maxlength="-1" bindinput="inputChange" id="layPlace" placeholder="{{addType==100?showTipsName.layType[chooseResult.layType].inputTips:'请输入手机号或其他的联系方式，方便联系取回。'}}">
+          </textarea>
+            </view>
+          </view>
+
+        </view>
+
+        <!-- 添加图片 -->
+        <view class="addPicBox">
+          <view class="CSline articleTitle">添加 物品/置放地 图片</view>
+          <view class="addPicTips iconfont icon-cpa-ExclamationMark-2"> 最多添加3张图片，请谨慎选择</view>
+          <view class="addPicTips iconfont icon-cpa-ExclamationMark-2"> 请不要展示涉及个人信息的图片，可模糊处理</view>
+          <view style="display: flex;flex-direction: row;">
+            <view bindtap="sendPic" wx:for="{{alreadySendPic}}" wx:key="index" class="addPic" id='{{index}}'>
+              <view class="fixAutoChange picConfirm iconfont icon-cpApprove"></view>
+              <image style="height:  29.3vw;width:  29.3vw;border-radius: 4px;" src="{{item}}"></image>
+            </view>
+            <view bindtap="sendPic" wx:if="{{alreadySendPic.length!=3}}" class="addPic iconfont icon-cpa-AddNew" id='add'>
+            </view>
+          </view>
+        </view>
+
+        <view class="addPicBox">
+          <view class="addPicTips iconfont icon-cpChecked"> 你的个人信息将会自动上传【默认】</view>
+          <view class="addPicTips iconfont {{showMyName?'icon-cpChecked':'icon-cpshape-3'}}" bindtap="showMyNameChange">
+            在首页展示我的姓名</view>
+        </view>
+
+        <!-- 上传 -->
+        <view style="width: 100%;margin-top: auto;">
+          <view style="width: 100%;display: flex;flex-direction: row;margin-top: 6vw;">
+            <view class="sendupArticle iconfont icon-cpupload1" style="background-color:{{loadWidth==100?'#4666c5;color: #fff;':'rgba(0,0,0,0.05);color: rgba(0, 0, 0, 0.5);'}};" bindtap="sendupArticle"> 上传</view>
+          </view>
+        </view>
+
+      </view>
+    </view>
+    <view style="height: 20vh;position: relative;">
+      <!-- logo -->
+      <view class="tips">
+        <text bindtap="navigateToUA" class="navigateToUA">《CampusPass失物招领责任说明》</text>
+        <text>CampusPass for SWU, All Rights Reserved</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 遮罩 -->
+<view class="containerCover" style="transform: translateY({{coverControl}}vh);transition: {{coverControl==-100?'0':'200ms'}};">{{addType==100?'【物找主】拾取物品登记':'【主找物】物品丢失登记'}}</view>
